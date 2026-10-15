@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ClothMart | Fashion Store</title>
+<style>
+  :root {
+    --nav: #131921;
+    --sub: #232f3e;
+    --accent: #febd69;
+    --btn: #ffd814;
+    --btn-dark: #ffa41c;
+    --bg: #eaeded;
+    --text: #0f1111;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  a { color: inherit; }
+  .topbar {
+    background: var(--nav);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 10px 24px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+  .logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+    color: #fff;
+    white-space: nowrap;
+  }
+  .logo span { color: var(--accent); }
+  .search {
+    flex: 1;
+    display: flex;
+  }
+  .search input {
+    width: 100%;
+    border: 0;
+    padding: 10px 12px;
+    border-radius: 4px 0 0 4px;
+    font-size: 14px;
+  }
+  .search button {
+    background: var(--accent);
+    border: 0;
+    padding: 0 16px;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 2px;
+  }
+  nav a:hover { border-color: #fff; }
+  .cart-link { color: var(--accent) !important; }
+  .hero {
+    background: linear-gradient(90deg, #1b4332, #232f3e 45%, #8c2f39);
+    color: #fff;
+    padding: 48px 24px;
+    text-align: center;
+  }
+  .hero h1 { margin: 0 0 8px; font-size: 36px; }
+  .hero p { margin: 0; font-size: 18px; opacity: 0.92; }
+  section { padding: 36px 24px 16px; max-width: 1180px; margin: 0 auto; }
+  h2 { margin: 0 0 18px; font-size: 24px; }
+  .flash {
+    max-width: 1180px;
+    margin: 16px auto 0;
+    padding: 10px 14px;
+    border-radius: 6px;
+  }
+  .success { background: #d1e7dd; color: #0f5132; }
+  .error { background: #f8d7da; color: #842029; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 16px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(15, 17, 17, 0.12);
+  }
+  .card img { width: 100%; height: 240px; object-fit: cover; display: block; }
+  .card-body { padding: 12px; }
+  .card h3 { margin: 0 0 6px; font-size: 16px; }
+  .muted { color: #565959; font-size: 13px; margin: 0 0 10px; }
+  .price { color: #b12704; font-weight: 700; font-size: 18px; margin-bottom: 10px; }
+  .btn {
+    background: var(--btn);
+    border: 1px solid #fcd200;
+    border-radius: 20px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-weight: 700;
+    width: 100%;
+  }
+  .btn:hover { background: var(--btn-dark); }
+  .btn-danger {
+    background: #fff;
+    border: 1px solid #d5d9d9;
+    width: auto;
+    padding: 6px 12px;
+  }
+  table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+  th, td { text-align: left; padding: 12px; border-bottom: 1px solid #eee; }
+  .checkout {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 520px;
+  }
+  label { display: block; font-size: 13px; font-weight: 700; margin: 10px 0 4px; }
+  input, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #888c8c;
+    border-radius: 4px;
+    font: inherit;
+  }
+  footer {
+    background: var(--sub);
+    color: #ddd;
+    text-align: center;
+    padding: 22px;
+    margin-top: 40px;
+  }
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="#top">Cloth<span>Mart</span></a>
+  <form class="search" onsubmit="return filterProducts(event)">
+    <input id="searchBox" type="search" placeholder="Search clothes, jeans, dresses...">
+    <button type="submit">Go</button>
+  </form>
+  <nav>
+    <a href="#category">Category</a>
+    <a href="#products">Products</a>
+    <a class="cart-link" href="#cart">Cart ({{ cart_count }})</a>
+    <a href="#checkout">Checkout</a>
+  </nav>
+</header>
+
+<div class="hero" id="top">
+  <h1>Deals on Men, Women &amp; Kids Fashion</h1>
+  <p>A simple Amazon-style clothing shop — browse, add to cart, and checkout on one page.</p>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="flash {{ message.tags }}">{{ message }}</div>
+  {% endfor %}
+{% endif %}
+
+<section id="category">
+  <h2>Shop by Category</h2>
+  <div class="grid">
+    {% for cat in categories %}
+    <article class="card">
+      {% if cat.image %}
+      <img src="{{ cat.image.url }}" alt="{{ cat.name }}">
+      {% endif %}
+      <div class="card-body">
+        <h3>{{ cat.name }}</h3>
+        <p class="muted">Clothing and everyday fashion</p>
+        <button class="btn" type="button" onclick="showCategory('{{ cat.name }}')">View {{ cat.name }}</button>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="products">
+  <h2>Products <span id="productFilterLabel" class="muted"></span></h2>
+  <div class="grid" id="productGrid">
+    {% for product in products %}
+    <article class="card product-card" data-name="{{ product.name|lower }}" data-category="{{ product.category.name }}">
+      {% if product.image %}
+      <img src="{{ product.image.url }}" alt="{{ product.name }}">
+      {% endif %}
+      <div class="card-body">
+        <h3>{{ product.name }}</h3>
+        <p class="muted">{{ product.category.name }} · {{ product.description }}</p>
+        <div class="price">₹{{ product.price }}</div>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="add">
+          <input type="hidden" name="product_id" value="{{ product.id }}">
+          <button class="btn" type="submit">Add to Cart</button>
+        </form>
+      </div>
+    </article>
+    {% empty %}
+    <p>No products yet. Refresh the page to load sample clothes.</p>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="cart">
+  <h2>Cart</h2>
+  {% if cart_items %}
+  <table>
+    <tr><th>Item</th><th>Qty</th><th>Subtotal</th><th></th></tr>
+    {% for item in cart_items %}
+    <tr>
+      <td>{{ item.product.name }}</td>
+      <td>{{ item.qty }}</td>
+      <td>₹{{ item.subtotal }}</td>
+      <td>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="remove">
+          <input type="hidden" name="product_id" value="{{ item.product.id }}">
+          <button class="btn btn-danger" type="submit">Remove</button>
+        </form>
+      </td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <th colspan="2">Total</th>
+      <th>₹{{ cart_total }}</th>
+      <th><a href="#checkout">Proceed to checkout</a></th>
+    </tr>
+  </table>
+  {% else %}
+  <p class="muted">Your cart is empty. Add clothes from the products section.</p>
+  {% endif %}
+</section>
+
+<section id="checkout">
+  <h2>Checkout</h2>
+  <form class="checkout" method="post">
+    {% csrf_token %}
+    <input type="hidden" name="action" value="checkout">
+    <p class="muted">Delivering {{ cart_count }} item(s). Payable amount: <strong>₹{{ cart_total }}</strong></p>
+    <label for="name">Full name</label>
+    <input id="name" name="name" required>
+    <label for="phone">Phone</label>
+    <input id="phone" name="phone" required>
+    <label for="address">Delivery address</label>
+    <textarea id="address" name="address" rows="3" required></textarea>
+    <br><br>
+    <button class="btn" type="submit">Place order</button>
+  </form>
+</section>
+
+<footer>ClothMart — one-page Django clothing store</footer>
+
+<script>
+function showCategory(name) {
+  const cards = document.querySelectorAll('.product-card');
+  let visible = 0;
+  cards.forEach((card) => {
+    const match = card.dataset.category === name;
+    card.classList.toggle('hidden', !match);
+    if (match) visible += 1;
+  });
+  document.getElementById('productFilterLabel').textContent = '— ' + name + ' (' + visible + ')';
+  document.getElementById('products').scrollIntoView();
+}
+
+function filterProducts(event) {
+  event.preventDefault();
+  const query = document.getElementById('searchBox').value.trim().toLowerCase();
+  const cards = document.querySelectorAll('.product-card');
+  let visible = 0;
+  cards.forEach((card) => {
+    const match = !query || card.dataset.name.includes(query) || card.dataset.category.toLowerCase().includes(query);
+    card.classList.toggle('hidden', !match);
+    if (match) visible += 1;
+  });
+  document.getElementById('productFilterLabel').textContent = query ? '— search results (' + visible + ')' : '';
+  document.getElementById('products').scrollIntoView();
+  return false;
+}
+</script>
+</body>
+</html>

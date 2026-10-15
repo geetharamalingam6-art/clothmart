@@ -56,7 +56,8 @@ def seed_clothes_catalog():
         category, _ = Category.objects.get_or_create(name=category_name)
         cat_rel = data["image"]
         cat_path = media_root / cat_rel
-        if not cat_path.exists() or not category.image:
+        # Only draw a placeholder when no real category image exists on disk.
+        if not cat_path.exists():
             _draw_label(cat_path, data["banner"], category_name, "Fashion")
         category.image = cat_rel
         category.save()

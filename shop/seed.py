@@ -27,7 +27,7 @@ CATALOG = {
         ],
     },
     "Children": {
-        "image": "categories/children.jpg",
+        "image": "categories/kid.jpg",
         "banner": (22, 101, 52),
         "products": [
             ("Kids Graphic T-Shirt", "Fun printed tee for school and play.", "349.00", "products/kid1.jpeg", (34, 139, 90)),
